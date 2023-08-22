@@ -1,0 +1,21 @@
+version: 0.2
+
+env:
+  parameter-store:
+    AWS_ACCESS_KEY_ID: /serverless-framework-base/codebuild-access-key
+    AWS_SECRET_ACCESS_KEY: /serverless-framework-base/codebuild-secret-access-key
+phases:
+  install:
+    commands:
+      - apt update
+      - apt install -y nodejs npm python3.9 python3-pip
+      - npm install -g serverless
+      - pip install pytest
+  pre_build:
+    commands:
+      - sls config credentials --provider aws --key $AWS_ACCESS_KEY_ID --secret $AWS_SECRET_ACCESS_KEY
+  build:
+    commands:
+      - cd src/serverless-framework-base
+      - pytest serverless-framework-base/tests/
+      - sls deploy
