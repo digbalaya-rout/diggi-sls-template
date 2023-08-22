@@ -1,0 +1,55 @@
+service: serverless-framework-base
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.10
+
+# you can overwrite defaults here
+  stage: dev
+  region: ap-northeast-1
+
+# layers:
+#   requests:
+#     package:
+#       artifact: ./lib/requests.zip
+
+  # {library}:
+  #   package:
+  #     artifact: {library}.zip
+
+# To create the lambda layer using requirements.txt & serverless-python-requirements plugin
+custom:
+  pythonRequirements:
+    layer: true
+
+# you can add statements to the Lambda function's IAM Role here
+#  iam:
+#    role:
+#      statements:
+#        - Effect: "Allow"
+#          Action:
+#            - "s3:ListBucket"
+#          Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+#        - Effect: "Allow"
+#          Action:
+#            - "s3:PutObject"
+#          Resource:
+#            Fn::Join:
+#              - ""
+#              - - "arn:aws:s3:::"
+#                - "Ref" : "ServerlessDeploymentBucket"
+#                - "/*"
+
+# you can define service wide environment variables here
+#  environment:
+#    variable1: value1
+
+functions:
+  hello:
+    handler: app.handler.hello
+    layers:
+      - !Ref PythonRequirementsLambdaLayer
+
+plugins:
+  - serverless-python-requirements
